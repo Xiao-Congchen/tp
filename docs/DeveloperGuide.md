@@ -105,8 +105,6 @@ The following sequence diagram illustrates how the **Logic** component handles t
 <div markdown="span" class="alert alert-info">:information_source: **Note:** The lifeline for `FilterTagCommandParser` should end at the destroy marker (X) but due to a limitation of PlantUML, the lifeline continues till the end of diagram.
 </div>
 
-### Interactions inside the Logic component for the `findlink n/NAME` command
-
 The following sequence diagram illustrates how the **Logic** component handles the `findlink` command.
 
 ![Interactions Inside the Logic Component for the `findlink n/John Tan` Command](images/FindLinkSequenceDiagram.png)
@@ -633,7 +631,7 @@ testers are expected to do more *exploratory* testing.
       Expected: Similar to previous.
 
 
-1. Deleting by identifiers (name/email/phone)
+2. Deleting by identifiers (name/email/phone)
 
    1. **Test case**: `delete n/John Doe`<br>
       Expected: The contact whose name matches “John Doe” (case-insensitive) is deleted. Success message shows the deleted person’s details.
@@ -726,16 +724,45 @@ testers are expected to do more *exploratory* testing.
    3. Other incorrect delete commands to try: `findlink`, `findlink n/`, `findlink 1`, `findlink n/John n/Jane`,  `findlink randomtext n/John`<br>
       Expected: Error: "Invalid command format! findlink: Shows contacts linked to the given person. Parameters: n/NAME Example: findlink n/John Tan"
 
+### Filter contacts by tag
+
+Prerequisites: 
+1. Ensure that contacts have been added with specific tags (e.g., add n/John Tan p/98765432 e/john@example.com a/Blk 1 t/Math, add n/Jane Doe p/91234567 e/jane@example.com a/Blk 2 t/Science).
+2. Ensure the desired tags are already in the tag list. If not, use addtag.
+
+1. Displays all contacts with the given tags if the tags exist 
+   1. **Test case:** `filter t/Math`<br>
+      Expected: Display all contacts with the "Math" tag.
+   2. **Test case:** `filter t/Science`<br>
+      Expected: Display all contacts with the "Science" tag.
+   3. **Test case:** `filter t/Math t/Science`<br>
+      Expected: Display all contacts with either "Math" or "Science" tags.
+   4. **Test case:** `filter t/English` when no contacts have "English" tag <br>
+      Expected: No contacts found with the "English" tag.
+
 ### Saving data
 
-1. Dealing with missing/corrupted data files
+1. Dealing with missing files
 
-   1. Open the `ClassConnect.json` file in a text editor and delete some attributes (e.g., remove the "phone" attribute of a person).
-   2. Save the file.
-   3. Relaunch the app by double-clicking the jar file.<br>
-       Expected: The app launches successfully but is defaulted to an empty contact list. All functions will work as intended and the old `ClassConnect.json` file will be overwritten upon the next data save (exit).
+    1. Navigate to the `/data` folder and delete `addressbook.json`. Then relaunch the app.
+       Expected: App starts with an empty address book. A new `addressbook.json` file is created automatically when the next change is made (e.g., after an `add` command).
 
+2. Dealing with corrupted data
 
+    1. Open `addressbook.json` and manually edit its contents to invalid JSON (e.g., delete a bracket, or change a field name). Then relaunch the app.
+       Expected: App detects invalid data and starts with an empty address book. An error message is shown in the terminal indicating the data could not be loaded. The corrupted file is not overwritten until a modifying command is executed.
+
+<div markdown="span" class="alert alert-info">:information_source: **Note:** Corruption must result in invalid JSON (not just editing a value). E.g., removing a " or } is a valid test.
+</div>
+
+3. Verifying Data is Saved Across Sessions
+    1. Launch ClassConnect.
+    2. Perform a data-editing command.
+    3. Close the application.
+    4. Relaunch the application.
+       Expected: The contact added in Step 2 is still shown. This confirms that data saving and loading work correctly.
+       
+       
 ### Planned Enhancements
 1. Storage format
    - Currently: ClassConnect.json stores 2 copies of the "ROLE" attribute for each person on some devices.
