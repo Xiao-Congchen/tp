@@ -717,10 +717,10 @@ testers are expected to do more *exploratory* testing.
 
 1. Displays all contacts that are linked to a given person (e.g., showing all parents linked to a student, or vice versa).
 
-   1. Test case: `findlink n/John Doe`<br>
+   1. **Test case**: `findlink n/John Doe`<br>
       Expected: Lists all contacts linked to “John Doe”. Message: "Showing X linked contact(s) for John Doe."
 
-   2. Test case: `findlink n/Nonexistent Name`<br>
+   2. **Test case**: `findlink n/Nonexistent Name`<br>
       Expected: Error: "No person found with the name: Nonexistent Name."
 
    3. Other incorrect delete commands to try: `findlink`, `findlink n/`, `findlink 1`, `findlink n/John n/Jane`,  `findlink randomtext n/John`<br>
@@ -730,6 +730,14 @@ testers are expected to do more *exploratory* testing.
 
 1. Dealing with missing/corrupted data files
 
-   1. _{explain how to simulate a missing/corrupted file, and the expected behavior}_
+   1. Open the `ClassConnect.json` file in a text editor and delete some attributes (e.g., remove the "phone" attribute of a person).
+   2. Save the file.
+   3. Relaunch the app by double-clicking the jar file.<br>
+       Expected: The app launches successfully but is defaulted to an empty contact list. All functions will work as intended and the old `ClassConnect.json` file will be overwritten upon the next data save (exit).
 
-2. _{ more test cases …​ }_
+
+### Planned Enhancements
+1. Storage format
+   - Currently: ClassConnect.json stores 2 copies of the "ROLE" attribute for each person on some devices.
+   - Issue: This is redundant but **does not** impact the proper functioning of the application.
+   - Planned: The JSON adapted files will be updated to only store one "ROLE" attribute per Person.
